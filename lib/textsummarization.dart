@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:gptgen/themes/change_theme_button_widget.dart';
+import 'package:gptgen/themes/loading.dart';
 import 'package:http/http.dart' as http;
 import 'package:gptgen/main.dart';
 import 'package:gptgen/apikey.dart';
@@ -16,6 +17,7 @@ class _TextSummarizeState extends State<TextSummarize> {
 
   final List<MessagetoSummarize> _messages = [];
   final TextEditingController _textEditingController = TextEditingController();
+  bool _isTyping = false;
 
   void onSendMessage() async {
     if(_textEditingController.text.isEmpty) return;
@@ -23,6 +25,7 @@ class _TextSummarizeState extends State<TextSummarize> {
     _textEditingController.clear();
     setState(() {
       _messages.insert(0, input);
+      _isTyping = true;
     });
     String response = await sendMessageToSummarizeText(input.text);
     MessagetoSummarize textsummarizer = MessagetoSummarize(text: response, isMe: false);
@@ -49,6 +52,9 @@ class _TextSummarizeState extends State<TextSummarize> {
     print(response.body);
     Map<String, dynamic> parsedReponse = json.decode(response.body);
     String reply = parsedReponse["summary"];
+    setState(() {
+      _isTyping = false;
+    });
     print(reply);
     return reply;
   }
@@ -62,11 +68,31 @@ class _TextSummarizeState extends State<TextSummarize> {
           crossAxisAlignment:
           message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: <Widget>[
-            Text(
-              message.isMe ? 'You' : 'Summarized Text',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+            Container(
+              padding: EdgeInsets.all(15),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
+              decoration: BoxDecoration(
+                  color: message.isMe ?
+                  Theme.of(context).colorScheme.secondary : Colors.grey.shade800,
+                  borderRadius: BorderRadius.only(
+                    topLeft: const Radius.circular(15),
+                    topRight: const Radius.circular(15),
+                    bottomLeft: Radius.circular(message.isMe ? 15 : 0),
+                    bottomRight: Radius.circular(message.isMe ? 0 : 15),
+                  )
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    textAlign: TextAlign.left,
+                    message.isMe ? 'YOU' : 'SUMMARIZED TEXT',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 7),
+                  Text(message.text),
+                ],
+              ),
             ),
-            Text(message.text),
           ],
         ),
       ),
@@ -102,6 +128,7 @@ class _TextSummarizeState extends State<TextSummarize> {
               ),
             ),
             //const Divider(height: 1.0),
+            if(_isTyping) const Loading(),
             Container(
               height: 60,
               child: Container(
@@ -116,7 +143,9 @@ class _TextSummarizeState extends State<TextSummarize> {
                 child: Row(
                   children: <Widget>[
                     Expanded(
-                      child: TextField(
+                      child: TextFormField(
+                        maxLines: 3,
+                        minLines: 1,
                         controller: _textEditingController,
                         decoration: const InputDecoration.collapsed(hintText: "Send a message."),
                       ),

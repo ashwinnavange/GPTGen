@@ -20,7 +20,6 @@ class DallEAIScreen extends StatefulWidget {
 
 class _DallEAIScreenState extends State<DallEAIScreen> {
   final TextEditingController inputText = TextEditingController();
-  String apikey = 'ed13609dccmsh26910f37b6ca854p1c4407jsn9fd90ad75bda';
   String? image1;
   String? image2;
 
@@ -32,7 +31,7 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
         "n": 2,
         "size": "1024x1024",
       };
-
+      // inputText.clear();
       var res = await http.post(
           Uri.parse('https://openai80.p.rapidapi.com/images/generations'),
           headers: {
@@ -51,7 +50,7 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
 
       });
     }else{
-      print("Enter something");
+      return;
     }
   }
   _download1() async {
