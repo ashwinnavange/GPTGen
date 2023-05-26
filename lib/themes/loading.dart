@@ -41,17 +41,20 @@ class _LoadingState extends State<Loading>
     return AnimatedBuilder(
       animation: _animationController!,
       builder: (context, child) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) {
-            return Opacity(
-              opacity: index == _currentIndex ? 1.0 : 0.2,
-              child: const Text(
-                '.',
-                textScaleFactor: 5,
-              ),
-            );
-          }),
+        return Container(
+          height: 30,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(3, (index) {
+              return Opacity(
+                opacity: index == _currentIndex ? 1.0 : 0.2,
+                child: const Text(
+                  '°',
+                  textScaleFactor: 3,
+                ),
+              );
+            }),
+          ),
         );
       },
     );

@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:gptgen/speechapi.dart';
 import 'package:gptgen/themes/change_theme_button_widget.dart';
 import 'package:gptgen/themes/loading.dart';
 import 'package:http/http.dart' as http;
 import 'package:gptgen/main.dart';
 import 'package:gptgen/apikey.dart';
+import 'package:gptgen/features/pdfgenerator.dart';
 
 class ChatGPTScreen extends StatefulWidget {
   const ChatGPTScreen({super.key});
@@ -14,12 +16,18 @@ class ChatGPTScreen extends StatefulWidget {
 }
 
 class _ChatGPTScreenState extends State<ChatGPTScreen> {
+  String mictext = '';
   final List<Message> _messages = [];
   final TextEditingController _textEditingController = TextEditingController();
+  final VoiceHandler voiceHandler = VoiceHandler();
   bool _isTyping = false;
+  String yourtext='';
+  String bottext='';
+  String totaltext='';
 
   @override
   void initState() {
+    voiceHandler.initSpeech();
     super.initState();
   }
 
@@ -31,6 +39,7 @@ class _ChatGPTScreenState extends State<ChatGPTScreen> {
   void onSendMessage() async {
     if(_textEditingController.text.isEmpty) return;
     Message message = Message(text: _textEditingController.text, isMe: true);
+    yourtext=_textEditingController.text;
     _textEditingController.clear();
     setState(() {
       _messages.insert(0, message);
@@ -41,6 +50,7 @@ class _ChatGPTScreenState extends State<ChatGPTScreen> {
     setState(() {
       _messages.insert(0, chatGpt);
     });
+    showmessage();
   }
 
   Future<String> sendMessageToChatGpt(String message) async {
@@ -66,21 +76,53 @@ class _ChatGPTScreenState extends State<ChatGPTScreen> {
       _isTyping = false;
     });
     print(reply);
+    bottext=reply;
     return reply;
   }
 
+
+  void sendVoiceMessage() async {
+    if (!voiceHandler.isEnabled) {
+      print('Not supported');
+      return;
+    }
+    if (voiceHandler.speechToText.isListening) {
+      await voiceHandler.stopListening();
+    } else {
+      final result = await voiceHandler.startListening();
+      _textEditingController.text = result;
+    }
+  }
+
+  void showmessage() {
+    totaltext='$totaltext$yourtext\n\n$bottext\n--------------------------------------------------------------------------------------------------------------\n';
+  }
+  // Future<String> createPdfBlob() async {
+  //   final url = html.Url.createObjectUrlFromBlob (
+  //       await CreatePdf().downloadReport(descriptiontext: 'hello'),
+  //   );
+  //   final anchor = html.document.createElement('a') as html.AnchorElement
+  //     ..href = url
+  //     ..style.display = 'none'
+  //     ..download = "samplePdfFile";
+  //   html.document.body!.children.add(anchor);
+  //   anchor.click();
+  //   html.document.body!.children.remove(anchor);
+  //   return url;
+  // }
+
   Widget _buildMessage(Message message) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      margin: const EdgeInsets.only(top: 10.0,bottom: 10),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        padding: const EdgeInsets.only(right: 20,left: 20),
         child: Column(
           crossAxisAlignment:
           message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(15),
-              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
               decoration: BoxDecoration(
                 color: message.isMe ?
                     Theme.of(context).colorScheme.secondary : Colors.grey.shade800,
@@ -94,12 +136,11 @@ class _ChatGPTScreenState extends State<ChatGPTScreen> {
               child: Column(
                 children: [
                   Text(
-                    textAlign: TextAlign.left,
-                    message.isMe ? 'You' : 'GPT',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    message.isMe ? 'YOU' : 'GPT',
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 7),
-                  Text(message.text),
+                  SelectableText(message.text),
                 ],
               ),
             ),
@@ -160,12 +201,13 @@ class _ChatGPTScreenState extends State<ChatGPTScreen> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.mic),
-                      onPressed: () { },
+                      onPressed: sendVoiceMessage,
                     ),
                     IconButton(
                       icon: Icon(Icons.send),
-                      onPressed: onSendMessage,
+                      onPressed: _isTyping ? null : onSendMessage,
                     ),
+                    IconButton(onPressed: (){CreatePdf().downloadReport(totaltext);}, icon: Icon(Icons.abc))
                   ],
                 ),
               ),

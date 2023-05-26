@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gptgen/speechapi.dart';
 import 'dart:convert';
 import 'package:gptgen/themes/change_theme_button_widget.dart';
 import 'package:gptgen/themes/loading.dart';
@@ -14,10 +15,16 @@ class TextSummarize extends StatefulWidget {
 }
 
 class _TextSummarizeState extends State<TextSummarize> {
-
   final List<MessagetoSummarize> _messages = [];
   final TextEditingController _textEditingController = TextEditingController();
+  final VoiceHandler voiceHandler = VoiceHandler();
   bool _isTyping = false;
+
+  @override
+  void initState() {
+    voiceHandler.initSpeech();
+    super.initState();
+  }
 
   void onSendMessage() async {
     if(_textEditingController.text.isEmpty) return;
@@ -59,18 +66,31 @@ class _TextSummarizeState extends State<TextSummarize> {
     return reply;
   }
 
+  void sendVoiceMessage() async {
+    if (!voiceHandler.isEnabled) {
+      print('Not supported');
+      return;
+    }
+    if (voiceHandler.speechToText.isListening) {
+      await voiceHandler.stopListening();
+    } else {
+      final result = await voiceHandler.startListening();
+      _textEditingController.text = result;
+    }
+  }
+
   Widget _buildMessage(MessagetoSummarize message) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      margin: const EdgeInsets.only(top: 10.0,bottom: 10),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        padding: const EdgeInsets.only(right: 20,left: 20),
         child: Column(
           crossAxisAlignment:
           message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(15),
-              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
               decoration: BoxDecoration(
                   color: message.isMe ?
                   Theme.of(context).colorScheme.secondary : Colors.grey.shade800,
@@ -84,7 +104,6 @@ class _TextSummarizeState extends State<TextSummarize> {
               child: Column(
                 children: [
                   Text(
-                    textAlign: TextAlign.left,
                     message.isMe ? 'YOU' : 'SUMMARIZED TEXT',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -98,7 +117,6 @@ class _TextSummarizeState extends State<TextSummarize> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -152,7 +170,7 @@ class _TextSummarizeState extends State<TextSummarize> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.mic),
-                      onPressed: () { },
+                      onPressed: sendVoiceMessage,
                     ),
                     IconButton(
                       icon: Icon(Icons.send),

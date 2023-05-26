@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:gptgen/apikey.dart';
+import 'package:gptgen/speechapi.dart';
 import 'package:gptgen/themes/loading.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -15,10 +16,16 @@ class TextParaphrase extends StatefulWidget {
 }
 
 class _TextParaphraseState extends State<TextParaphrase> {
-
   final List<MessagetoParaphrase> _messages = [];
   final TextEditingController _textEditingController = TextEditingController();
+  final VoiceHandler voiceHandler = VoiceHandler();
   bool _isTyping = false;
+
+  @override
+  void initState() {
+    voiceHandler.initSpeech();
+    super.initState();
+  }
 
   void onSendMessage() async {
     if(_textEditingController.text.isEmpty) return;
@@ -61,18 +68,31 @@ class _TextParaphraseState extends State<TextParaphrase> {
     return reply;
   }
 
+  void sendVoiceMessage() async {
+    if (!voiceHandler.isEnabled) {
+      print('Not supported');
+      return;
+    }
+    if (voiceHandler.speechToText.isListening) {
+      await voiceHandler.stopListening();
+    } else {
+      final result = await voiceHandler.startListening();
+      _textEditingController.text = result;
+    }
+  }
+
   Widget _buildMessage(MessagetoParaphrase message) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      margin: const EdgeInsets.only(top: 10.0,bottom: 10),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        padding: const EdgeInsets.only(right: 20,left: 20),
         child: Column(
           crossAxisAlignment:
           message.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: <Widget>[
             Container(
               padding: EdgeInsets.all(15),
-              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.6),
+              constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
               decoration: BoxDecoration(
                   color: message.isMe ?
                   Theme.of(context).colorScheme.secondary : Colors.grey.shade800,
@@ -86,7 +106,6 @@ class _TextParaphraseState extends State<TextParaphrase> {
               child: Column(
                 children: [
                   Text(
-                    textAlign: TextAlign.left,
                     message.isMe ? 'YOU' : 'PARAPHRASED',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
@@ -154,7 +173,7 @@ class _TextParaphraseState extends State<TextParaphrase> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.mic),
-                      onPressed: () { },
+                      onPressed: sendVoiceMessage,
                     ),
                     IconButton(
                       icon: Icon(Icons.send),

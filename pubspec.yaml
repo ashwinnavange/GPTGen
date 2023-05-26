@@ -43,6 +43,12 @@ dependencies:
   image_gallery_saver: ^1.7.1
   flutter_speed_dial: ^6.2.0
   flutter_toastr: ^1.0.3
+  speech_to_text: ^6.1.1
+  pdf: ^3.6.4
+  printing: ^5.9.3
+
+  # universal_html: ^2.0.8
+
 
 dev_dependencies:
   flutter_test:
@@ -82,10 +88,11 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-#  fonts:
-#    - family: Poppins
-#      fonts:
-#        - asset: fonts/Poppins-Medium.ttf
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Medium.ttf
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

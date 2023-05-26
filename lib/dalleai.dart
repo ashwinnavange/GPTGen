@@ -6,7 +6,9 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:gptgen/apikey.dart';
 import 'package:gptgen/main.dart';
+import 'package:gptgen/speechapi.dart';
 import 'package:gptgen/themes/change_theme_button_widget.dart';
+import 'package:gptgen/themes/loading.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,18 +22,36 @@ class DallEAIScreen extends StatefulWidget {
 
 class _DallEAIScreenState extends State<DallEAIScreen> {
   final TextEditingController inputText = TextEditingController();
+  final VoiceHandler voiceHandler = VoiceHandler();
+  bool _isTyping = false;
+  String error = '';
   String? image1;
   String? image2;
 
+  @override
+  void initState() {
+    voiceHandler.initSpeech();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
   void getAIImage() async{
     if(inputText.text.isNotEmpty){
-
+      Message message = Message(text: inputText.text);
+      inputText.clear();
+      print(message.text);
+      setState(() {
+        _isTyping = true;
+      });
       var data ={
-        "prompt": inputText.text,
+        "prompt": message.text,
         "n": 2,
         "size": "1024x1024",
       };
-      // inputText.clear();
       var res = await http.post(
           Uri.parse('https://openai80.p.rapidapi.com/images/generations'),
           headers: {
@@ -45,14 +65,36 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
 
       image1 = jsonResponse['data'][0]['url'];
       image2 = jsonResponse['data'][1]['url'];
-
+      error = jsonResponse["message"];
+      print(error);
+      if(error=='Bad Request'){
+        setState(() {
+          _isTyping = false;
+        });
+        _showToast(error,duration: FlutterToastr.lengthLong,position: FlutterToastr.bottom);
+      }
       setState(() {
-
+        _isTyping = false;
       });
     }else{
       return;
     }
   }
+
+  void sendVoiceMessage() async {
+    if (!voiceHandler.isEnabled) {
+      print('Not supported');
+      return;
+    }
+    if (voiceHandler.speechToText.isListening) {
+      await voiceHandler.stopListening();
+    } else {
+      final result = await voiceHandler.startListening();
+      print(result);
+      inputText.text = result;
+    }
+  }
+
   _download1() async {
     var status = await Permission.storage.request();
     if (status.isGranted) {
@@ -145,8 +187,8 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
                             fit: BoxFit.cover,
                           ),
                         ),
-                      ) : Container(child: Text("Please Enter Text To Generate AI image")),
-                      SizedBox(height: 40),
+                      ) : _isTyping==true ? const Loading() : Container(child: Text("Please Enter Text To Generate AI image")),
+                      const SizedBox(height: 40),
                       image2 != null ?
                       Container(
                         width: 256,
@@ -185,10 +227,10 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.mic),
-                      onPressed: () { },
+                      onPressed: sendVoiceMessage,
                     ),
                     IconButton(
-                      icon: Icon(Icons.send),
+                      icon: const Icon(Icons.send),
                       onPressed: getAIImage,
                     ),
                   ],
@@ -201,4 +243,8 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
     );
   }
 }
+class Message {
+  final String text;
 
+  Message({required this.text});
+}
