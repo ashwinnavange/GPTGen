@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:speech_to_text/speech_to_text.dart';
 
 class VoiceHandler {
@@ -27,5 +26,6 @@ class VoiceHandler {
   }
 
   SpeechToText get speechToText => _speechToText;
+
   bool get isEnabled => _speechEnabled;
 }

@@ -46,6 +46,7 @@ dependencies:
   speech_to_text: ^6.1.1
   pdf: ^3.6.4
   printing: ^5.9.3
+  font_awesome_flutter: ^10.4.0
 
   # universal_html: ^2.0.8
 
