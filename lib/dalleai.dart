@@ -130,11 +130,11 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: Text('DALL-E AI'),
+        iconTheme: Theme.of(context).primaryIconTheme,
+        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.4),
+        title: Text('DALL-E AI',style: TextStyle(color: Theme.of(context).highlightColor)),
         centerTitle: true,
         elevation: 1,
-        iconTheme: Theme.of(context).iconTheme,
         actions: [
           ChangeThemeButtonWidget(),
         ],
@@ -143,10 +143,12 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 70),
         child: SpeedDial(
+          iconTheme: Theme.of(context).iconTheme,
+          backgroundColor: Theme.of(context).dividerColor,
           spacing: 15,
           icon: Icons.menu,
           overlayColor: Colors.black,
-          overlayOpacity: 0.4,
+          overlayOpacity: 0.5,
           children: [
             SpeedDialChild(
               child: const Icon(Icons.download),
@@ -199,9 +201,8 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
                               )
                             : _isTyping == true
                                 ? const Loading()
-                                : Container(
-                                    child: const Text(
-                                        "Please Enter Text To Generate AI image")),
+                                : const Text(
+                                    "Please Enter Text To Generate AI image"),
                         const SizedBox(height: 40),
                         image2 != null
                             ? Container(
@@ -273,7 +274,7 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
             ),
             child: isShowSendButton
                 ? CircleAvatar(
-                    backgroundColor: const Color(0xFF128C7E),
+                    backgroundColor: Theme.of(context).iconTheme.color,
                     radius: 25,
                     child: GestureDetector(
                       onTap: _isTyping ? null : getAIImage,
@@ -284,7 +285,7 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
                     ),
                   )
                 : CircleAvatar(
-                    backgroundColor: const Color(0xFF128C7E),
+                    backgroundColor: Theme.of(context).iconTheme.color,
                     radius: 25,
                     child: GestureDetector(
                       onTap: sendVoiceMessage,

@@ -1,3 +1,4 @@
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gptgen/chatgpt.dart';
 import 'package:flutter/material.dart';
 import 'package:gptgen/dalleai.dart';
@@ -42,15 +43,21 @@ class NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Drawer(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            buildHeader(context),
-            const Divider(color: Colors.black54),
-            buildMenuItems(context),
-          ],
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Drawer(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                buildHeader(context),
+                const Divider(color: Colors.black54),
+                buildMenuItems(context),
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -87,7 +94,7 @@ class NavBar extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.image),
+              leading: const Icon(FontAwesomeIcons.image,size: 22,),
               title: const Text('Dall-E AI'),
               onTap: () {
                 Navigator.pop(context);

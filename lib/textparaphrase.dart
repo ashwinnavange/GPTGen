@@ -118,8 +118,8 @@ class _TextParaphraseState extends State<TextParaphrase> {
                   maxWidth: MediaQuery.of(context).size.width * 0.7),
               decoration: BoxDecoration(
                   color: message.isMe
-                      ? Theme.of(context).colorScheme.secondary
-                      : Colors.grey.shade800,
+                      ? Theme.of(context).focusColor
+                      : Theme.of(context).focusColor,
                   borderRadius: BorderRadius.only(
                     topLeft: const Radius.circular(15),
                     topRight: const Radius.circular(15),
@@ -147,11 +147,11 @@ class _TextParaphraseState extends State<TextParaphrase> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        title: const Text('Text Paraphraser'),
+        iconTheme: Theme.of(context).primaryIconTheme,
+        backgroundColor: Theme.of(context).primaryColor.withOpacity(0.4),
+        title: Text('Text Paraphraser',style: TextStyle(color: Theme.of(context).highlightColor)),
         centerTitle: true,
         elevation: 1,
-        iconTheme: Theme.of(context).iconTheme,
         actions: [
           ChangeThemeButtonWidget(),
         ],
@@ -215,9 +215,9 @@ class _TextParaphraseState extends State<TextParaphrase> {
                         onPressed: () {
                           CreatePdf().downloadReport(totaltext);
                         },
-                        icon: const Icon(
-                          FontAwesomeIcons.solidFilePdf,
-                          color: Colors.white,
+                        icon: Icon(
+                          FontAwesomeIcons.filePdf,
+                          color: Theme.of(context).highlightColor,
                           size: 22,
                         ),
                       ),
@@ -243,7 +243,7 @@ class _TextParaphraseState extends State<TextParaphrase> {
             ),
             child: isShowSendButton
                 ? CircleAvatar(
-                    backgroundColor: const Color(0xFF128C7E),
+                    backgroundColor: Theme.of(context).iconTheme.color,
                     radius: 25,
                     child: GestureDetector(
                       onTap: _isTyping ? null : onSendMessage,
@@ -254,7 +254,7 @@ class _TextParaphraseState extends State<TextParaphrase> {
                     ),
                   )
                 : CircleAvatar(
-                    backgroundColor: const Color(0xFF128C7E),
+                    backgroundColor: Theme.of(context).iconTheme.color,
                     radius: 25,
                     child: GestureDetector(
                       onTap: sendVoiceMessage,

@@ -22,11 +22,11 @@ class ChangeThemeButtonWidget extends StatelessWidget {
           inactiveToggleColor: Color(0xFF2F363D),
           activeColor: Color(0xFF271052),
           inactiveColor: Colors.white,
-          activeIcon: Icon(
+          activeIcon: const Icon(
             Icons.nightlight_round,
             color: Color(0xFFF8E3A1),
           ),
-          inactiveIcon: Icon(
+          inactiveIcon: const Icon(
             Icons.wb_sunny,
             color: Color(0xFFFFDF5D),
           ),

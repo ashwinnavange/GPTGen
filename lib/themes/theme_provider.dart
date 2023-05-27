@@ -22,15 +22,33 @@ class ThemeProvider extends ChangeNotifier {
 class MyThemes {
   static final darkTheme = ThemeData(
     scaffoldBackgroundColor: Colors.grey.shade900,
+    highlightColor: Colors.white,
     primaryColor: Colors.black,
+    accentColor: Color(0xFF6E40C9),
     colorScheme: ColorScheme.dark(),
-    iconTheme: IconThemeData(color: Colors.purple.shade200, opacity: 0.8),
+    iconTheme: IconThemeData(color: Color(0xFF6E40C9)),
+    primaryIconTheme: IconThemeData(color: Colors.white),
+    dividerColor: Colors.white,
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: Colors.white,
+      selectionColor: Color(0xFF6E40C9),
+      selectionHandleColor: Colors.white38,
+
+    ),
   );
 
   static final lightTheme = ThemeData(
     scaffoldBackgroundColor: Colors.white,
     primaryColor: Colors.white,
+    highlightColor: Colors.black,
     colorScheme: ColorScheme.light(),
-    iconTheme: IconThemeData(color: Colors.red, opacity: 0.8),
+    iconTheme: IconThemeData(color: Colors.black),
+    primaryIconTheme: IconThemeData(color: Colors.black),
+    dividerColor: Color(0xFFFFDF5D),
+    textSelectionTheme: TextSelectionThemeData(
+      cursorColor: Colors.black,
+      selectionColor: Colors.grey,
+      selectionHandleColor: Colors.grey,
+    ),
   );
 }
