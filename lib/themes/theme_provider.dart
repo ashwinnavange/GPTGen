@@ -24,12 +24,11 @@ class MyThemes {
     scaffoldBackgroundColor: Colors.grey.shade900,
     highlightColor: Colors.white,
     primaryColor: Colors.black,
-    accentColor: Color(0xFF6E40C9),
-    colorScheme: ColorScheme.dark(),
-    iconTheme: IconThemeData(color: Color(0xFF6E40C9)),
-    primaryIconTheme: IconThemeData(color: Colors.white),
+    colorScheme: const ColorScheme.dark(),
+    iconTheme: const IconThemeData(color: Color(0xFF6E40C9)),
+    primaryIconTheme: const IconThemeData(color: Colors.white),
     dividerColor: Colors.white,
-    textSelectionTheme: TextSelectionThemeData(
+    textSelectionTheme: const TextSelectionThemeData(
       cursorColor: Colors.white,
       selectionColor: Color(0xFF6E40C9),
       selectionHandleColor: Colors.white38,
@@ -41,11 +40,11 @@ class MyThemes {
     scaffoldBackgroundColor: Colors.white,
     primaryColor: Colors.white,
     highlightColor: Colors.black,
-    colorScheme: ColorScheme.light(),
-    iconTheme: IconThemeData(color: Colors.black),
-    primaryIconTheme: IconThemeData(color: Colors.black),
-    dividerColor: Color(0xFFFFDF5D),
-    textSelectionTheme: TextSelectionThemeData(
+    colorScheme: const ColorScheme.light(),
+    iconTheme: const IconThemeData(color: Colors.black),
+    primaryIconTheme: const IconThemeData(color: Colors.black),
+    dividerColor: const Color(0xFFFFDF5D),
+    textSelectionTheme: const TextSelectionThemeData(
       cursorColor: Colors.black,
       selectionColor: Colors.grey,
       selectionHandleColor: Colors.grey,
