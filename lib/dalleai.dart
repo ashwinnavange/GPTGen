@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:flutter_toastr/flutter_toastr.dart';
 import 'package:gptgen/apikey.dart';
-import 'package:gptgen/main.dart';
+import 'package:gptgen/themes/navbar.dart';
 import 'package:gptgen/features/speechapi.dart';
 import 'package:gptgen/themes/change_theme_button_widget.dart';
 import 'package:gptgen/themes/loading.dart';
@@ -54,18 +54,18 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
         "size": "1024x1024",
       };
       var res = await http.post(
-          Uri.parse('https://openai80.p.rapidapi.com/images/generations'),
+          Uri.parse('https://astro-ai.p.rapidapi.com/image'),
           headers: {
             'content-type': 'application/json',
             'X-RapidAPI-Key': APIKey.apiKey,
-            'X-RapidAPI-Host': 'openai80.p.rapidapi.com'
+            'X-RapidAPI-Host': 'astro-ai.p.rapidapi.com'
           },
           body: jsonEncode(data));
       print(res.body);
       var jsonResponse = jsonDecode(res.body);
 
-      image1 = jsonResponse['data'][0]['url'];
-      image2 = jsonResponse['data'][1]['url'];
+      image1 = jsonResponse['response'][0]['url'];
+      image2 = jsonResponse['response'][1]['url'];
       setState(() {
         _isTyping = false;
         isShowSendButton = false;
@@ -84,11 +84,18 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
       await voiceHandler.stopListening();
     } else {
       final result = await voiceHandler.startListening();
+      if(result.isEmpty){
+        setState(() {
+          isShowSendButton = false;
+        });
+      }
+      else{
+        setState(() {
+          isShowSendButton = true;
+        });
+      }
       inputText.text = result;
     }
-    setState(() {
-      isShowSendButton = true;
-    });
   }
 
   _download1() async {

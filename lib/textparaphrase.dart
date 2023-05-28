@@ -6,7 +6,7 @@ import 'package:gptgen/features/speechapi.dart';
 import 'package:gptgen/themes/loading.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
-import 'package:gptgen/main.dart';
+import 'package:gptgen/themes/navbar.dart';
 import 'themes/change_theme_button_widget.dart';
 
 class TextParaphrase extends StatefulWidget {
@@ -91,11 +91,18 @@ class _TextParaphraseState extends State<TextParaphrase> {
       await voiceHandler.stopListening();
     } else {
       final result = await voiceHandler.startListening();
+      if(result.isEmpty){
+        setState(() {
+          isShowSendButton = false;
+        });
+      }
+      else{
+        setState(() {
+          isShowSendButton = true;
+        });
+      }
       _textEditingController.text = result;
     }
-    setState(() {
-      isShowSendButton = true;
-    });
   }
 
   void pdfmessage() {
