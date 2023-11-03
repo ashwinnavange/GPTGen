@@ -53,25 +53,24 @@ class _TextSummarizeState extends State<TextSummarize> {
   }
 
   Future<String> sendMessageToSummarizeText(String text) async {
-    Uri uri = Uri.parse("https://gpt-summarization.p.rapidapi.com/summarize?text=$text&percentage=20");
+    Uri uri = Uri.parse("https://open-ai21.p.rapidapi.com/summary");
     final body = {
       'text': text,
-      'percentage': '20',
     };
 
     final response = await http.post(
       uri,
       headers: {
         'content-type': 'application/json',
+        'X-RapidAPI-Host': 'open-ai21.p.rapidapi.com',
         'X-RapidAPI-Key': APIKey.apiKey,
-        'X-RapidAPI-Host': 'gpt-summarization.p.rapidapi.com'
       },
       body: json.encode(body),
 
     );
     print(response);
     Map<String, dynamic> parsedReponse = json.decode(response.body);
-    String reply = parsedReponse["summary"];
+    String reply = parsedReponse["result"];
     setState(() {
       _isTyping = false;
       isShowSendButton = false;

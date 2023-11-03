@@ -40,7 +40,7 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
     super.dispose();
   }
 
-  void getAIImage() async {
+  Future<void> getAIImage() async {
     if (inputText.text.isNotEmpty) {
       Message message = Message(text: inputText.text);
       inputText.clear();
@@ -48,24 +48,29 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
       setState(() {
         _isTyping = true;
       });
-      var data = {
+      Map<String, String> data = {
         "prompt": message.text,
-        "n": 2,
-        "size": "1024x1024",
       };
-      var res = await http.post(
-          Uri.parse('https://astro-ai.p.rapidapi.com/image'),
-          headers: {
-            'content-type': 'application/json',
-            'X-RapidAPI-Key': APIKey.apiKey,
-            'X-RapidAPI-Host': 'astro-ai.p.rapidapi.com'
-          },
-          body: jsonEncode(data));
-      print(res.body);
-      var jsonResponse = jsonDecode(res.body);
-
-      image1 = jsonResponse['response'][0]['url'];
-      image2 = jsonResponse['response'][1]['url'];
+      final Uri uri = Uri.parse('https://stability-ai5.p.rapidapi.com/images');
+      final Map<String, String> headers = {
+        'content-type': 'application/json',
+        'X-RapidAPI-Processor': 'sync',
+        'X-RapidAPI-Key': APIKey.apiKey,
+        'X-RapidAPI-Host': 'stability-ai5.p.rapidapi.com',
+      };
+      final res = await http.post(
+        uri,
+        headers: headers,
+        body: jsonEncode(data),
+      );
+      if (res.statusCode == 200) {
+        print(res.body);
+      } else {
+        print('Request failed with status: ${res.statusCode}');
+      }
+      final Map<String, dynamic> jsonResponse = json.decode(res.body);
+      image1 = jsonResponse['url'];
+      //image2 = jsonResponse['url'];
       setState(() {
         _isTyping = false;
         isShowSendButton = false;
@@ -157,15 +162,15 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
           overlayColor: Colors.black,
           overlayOpacity: 0.5,
           children: [
-            SpeedDialChild(
-              child: const Icon(Icons.download),
-              label: "Image 2",
-              onTap: () => image2 != null
-                  ? _download2()
-                  : _showToast("Not Found",
-                      duration: FlutterToastr.lengthLong,
-                      position: FlutterToastr.bottom),
-            ),
+            // SpeedDialChild(
+            //   child: const Icon(Icons.download),
+            //   label: "Image 2",
+            //   onTap: () => image2 != null
+            //       ? _download2()
+            //       : _showToast("Not Found",
+            //           duration: FlutterToastr.lengthLong,
+            //           position: FlutterToastr.bottom),
+            // ),
             SpeedDialChild(
               child: const Icon(Icons.download),
               label: "Image 1",
@@ -194,36 +199,58 @@ class _DallEAIScreenState extends State<DallEAIScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        image1 != null
-                            ? Container(
-                                width: 256,
-                                height: 256,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  image: DecorationImage(
-                                    image: NetworkImage(image1!),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              )
-                            : _isTyping == true
-                                ? const Loading()
-                                : const Text(
-                                    "Please Enter Text To Generate AI image"),
-                        const SizedBox(height: 40),
-                        image2 != null
-                            ? Container(
-                                width: 256,
-                                height: 256,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(12),
-                                  image: DecorationImage(
-                                    image: NetworkImage(image2!),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              )
-                            : const SizedBox(height: 40),
+                        image1 != null ?
+                          Image.network(
+                            image1!,
+                            width: 512,
+                            height: 512,
+                            scale: 1,
+                            loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                              if (loadingProgress == null) {
+                                return child;
+                              } else if (loadingProgress.cumulativeBytesLoaded == loadingProgress.expectedTotalBytes) {
+                                return child;
+                              } else {
+                                return CircularProgressIndicator();
+                              }
+                            },
+                            errorBuilder: (BuildContext context, Object error, StackTrace? stackTrace) {
+                              return Text('Error loading image');
+                            },
+                          ) : _isTyping == true
+                            ? const Loading()
+                            : const Text(
+                            "Please Enter Text To Generate AI image"),
+                        // image1 != null
+                        //     ? Container(
+                        //         width: 512,
+                        //         height: 512,
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(12),
+                        //           image: DecorationImage(
+                        //             image: NetworkImage(image1!),
+                        //             fit: BoxFit.cover,
+                        //           ),
+                        //         ),
+                        //       )
+                        //     : _isTyping == true
+                        //         ? const Loading()
+                        //         : const Text(
+                        //             "Please Enter Text To Generate AI image"),
+                        // const SizedBox(height: 40),
+                        // image2 != null
+                        //     ? Container(
+                        //         width: 512,
+                        //         height: 512,
+                        //         decoration: BoxDecoration(
+                        //           borderRadius: BorderRadius.circular(12),
+                        //           image: DecorationImage(
+                        //             image: NetworkImage(image2!),
+                        //             fit: BoxFit.cover,
+                        //           ),
+                        //         ),
+                        //       )
+                        //     : const SizedBox(height: 40),
                         const SizedBox(height: 80)
                       ],
                     );

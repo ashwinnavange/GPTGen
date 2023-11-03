@@ -58,24 +58,25 @@ class _ChatGPTScreenState extends State<ChatGPTScreen> {
 
   Future<String> sendMessageToChatGpt(String message) async {
     try{
-      Uri uri = Uri.parse("https://chatgpt53.p.rapidapi.com/");
-      Map<String, dynamic> body = {
-        "messages": [
-          {"role": "user", "content": message}
-        ],
-      };
+      Uri uri = Uri.parse("https://chatgpt-api8.p.rapidapi.com/");
+      List<Map<String, dynamic>> body = [
+          {
+            "role": "user",
+            "content": message
+          }
+      ];
       final response = await http.post(
         uri,
         headers: {
           'content-type': 'application/json',
           'X-RapidAPI-Key': APIKey.apiKey,
-          'X-RapidAPI-Host': 'chatgpt53.p.rapidapi.com'
+          'X-RapidAPI-Host': 'chatgpt-api8.p.rapidapi.com'
         },
         body: json.encode(body),
       );
       print(response.body);
       Map<String, dynamic> parsedReponse = json.decode(response.body);
-      String reply = parsedReponse['choices'][0]['message']['content'];
+      String reply = parsedReponse['text'];
       setState(() {
         _isTyping = false;
         isShowSendButton = false;

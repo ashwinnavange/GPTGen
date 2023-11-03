@@ -3,7 +3,7 @@ import 'package:gptgen/chatgpt.dart';
 import 'package:provider/provider.dart';
 import 'package:gptgen/themes/theme_provider.dart';
 
-void main() {
+void main(){
   runApp(const MyApp());
 }
 
