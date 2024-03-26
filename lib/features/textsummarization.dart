@@ -1,23 +1,23 @@
-import 'dart:convert';
+import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:gptgen/apikey.dart';
-import 'package:gptgen/features/pdfgenerator.dart';
-import 'package:gptgen/features/speechapi.dart';
+import 'package:gptgen/utils/pdfgenerator.dart';
+import 'package:gptgen/utils/speechapi.dart';
+import 'dart:convert';
+import 'package:gptgen/themes/change_theme_button_widget.dart';
 import 'package:gptgen/themes/loading.dart';
 import 'package:http/http.dart' as http;
-import 'package:flutter/material.dart';
 import 'package:gptgen/themes/navbar.dart';
-import 'themes/change_theme_button_widget.dart';
+import 'package:gptgen/secrets/apikey.dart';
 
-class TextParaphrase extends StatefulWidget {
-  const TextParaphrase({Key? key}) : super(key: key);
+class TextSummarize extends StatefulWidget {
+  const TextSummarize({Key? key}) : super(key: key);
 
   @override
-  State<TextParaphrase> createState() => _TextParaphraseState();
+  State<TextSummarize> createState() => _TextSummarizeState();
 }
 
-class _TextParaphraseState extends State<TextParaphrase> {
-  final List<MessagetoParaphrase> _messages = [];
+class _TextSummarizeState extends State<TextSummarize> {
+  final List<MessagetoSummarize> _messages = [];
   final TextEditingController _textEditingController = TextEditingController();
   final VoiceHandler voiceHandler = VoiceHandler();
   bool _isTyping = false;
@@ -35,8 +35,8 @@ class _TextParaphraseState extends State<TextParaphrase> {
 
   void onSendMessage() async {
     if (_textEditingController.text.isEmpty) return;
-    MessagetoParaphrase input =
-        MessagetoParaphrase(text: _textEditingController.text, isMe: true);
+    MessagetoSummarize input =
+        MessagetoSummarize(text: _textEditingController.text, isMe: true);
     yourtext = _textEditingController.text;
     _textEditingController.clear();
     setState(() {
@@ -44,35 +44,33 @@ class _TextParaphraseState extends State<TextParaphrase> {
       _isTyping = true;
     });
     String response = await sendMessageToSummarizeText(input.text);
-    MessagetoParaphrase textparaphrase =
-        MessagetoParaphrase(text: response, isMe: false);
+    MessagetoSummarize textsummarizer =
+        MessagetoSummarize(text: response, isMe: false);
     setState(() {
-      _messages.insert(0, textparaphrase);
+      _messages.insert(0, textsummarizer);
     });
     pdfmessage();
   }
 
   Future<String> sendMessageToSummarizeText(String text) async {
-    Uri uri = Uri.parse(
-        "https://rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com/rewrite");
+    Uri uri = Uri.parse("https://open-ai21.p.rapidapi.com/summary");
     final body = {
-      'language': 'en',
-      'strength': 3,
       'text': text,
     };
+
     final response = await http.post(
       uri,
       headers: {
         'content-type': 'application/json',
+        'X-RapidAPI-Host': 'open-ai21.p.rapidapi.com',
         'X-RapidAPI-Key': APIKey.apiKey,
-        'X-RapidAPI-Host':
-            'rewriter-paraphraser-text-changer-multi-language.p.rapidapi.com'
       },
       body: json.encode(body),
+
     );
-    print(response.body);
+    print(response);
     Map<String, dynamic> parsedReponse = json.decode(response.body);
-    String reply = parsedReponse["rewrite"];
+    String reply = parsedReponse["result"];
     setState(() {
       _isTyping = false;
       isShowSendButton = false;
@@ -110,7 +108,7 @@ class _TextParaphraseState extends State<TextParaphrase> {
         '$totaltext$yourtext\n\n$bottext\n--------------------------------------------------------------------------------------------------------------------------------\n';
   }
 
-  Widget _buildMessage(MessagetoParaphrase message) {
+  Widget _buildMessage(MessagetoSummarize message) {
     return Container(
       margin: const EdgeInsets.only(top: 10.0, bottom: 10),
       child: Padding(
@@ -136,7 +134,7 @@ class _TextParaphraseState extends State<TextParaphrase> {
               child: Column(
                 children: [
                   Text(
-                    message.isMe ? 'YOU' : 'PARAPHRASED',
+                    message.isMe ? 'YOU' : 'SUMMARIZED TEXT',
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 7),
@@ -156,7 +154,7 @@ class _TextParaphraseState extends State<TextParaphrase> {
       appBar: AppBar(
         iconTheme: Theme.of(context).primaryIconTheme,
         backgroundColor: Theme.of(context).primaryColor.withOpacity(0.4),
-        title: Text('Text Paraphraser',style: TextStyle(color: Theme.of(context).highlightColor)),
+        title: Text('Text Summarize',style: TextStyle(color: Theme.of(context).highlightColor)),
         centerTitle: true,
         elevation: 1,
         actions: [
@@ -278,9 +276,9 @@ class _TextParaphraseState extends State<TextParaphrase> {
   }
 }
 
-class MessagetoParaphrase {
+class MessagetoSummarize {
   final String text;
   final bool isMe;
 
-  MessagetoParaphrase({required this.text, required this.isMe});
+  MessagetoSummarize({required this.text, required this.isMe});
 }

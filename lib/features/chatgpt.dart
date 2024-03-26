@@ -1,12 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:gptgen/features/speechapi.dart';
+import 'package:gptgen/utils/speechapi.dart';
 import 'package:gptgen/themes/change_theme_button_widget.dart';
 import 'package:gptgen/themes/loading.dart';
 import 'package:http/http.dart' as http;
 import 'package:gptgen/themes/navbar.dart';
-import 'package:gptgen/apikey.dart';
-import 'package:gptgen/features/pdfgenerator.dart';
+import 'package:gptgen/secrets/apikey.dart';
+import 'package:gptgen/utils/pdfgenerator.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class ChatGPTScreen extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gptgen/chatgpt.dart';
+import 'package:gptgen/features/chatgpt.dart';
 import 'package:provider/provider.dart';
 import 'package:gptgen/themes/theme_provider.dart';
 

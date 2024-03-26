@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:gptgen/chatgpt.dart';
-import 'package:gptgen/dalleai.dart';
-import 'package:gptgen/textparaphrase.dart';
-import 'package:gptgen/textsummarization.dart';
+import 'package:gptgen/features/chatgpt.dart';
+import 'package:gptgen/features/dalleai.dart';
+import 'package:gptgen/features/textparaphrase.dart';
+import 'package:gptgen/features/textsummarization.dart';
 import 'package:gptgen/themes/change_theme_button_widget.dart';
 
 class NavBar extends StatelessWidget {
